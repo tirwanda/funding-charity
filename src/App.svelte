@@ -5,6 +5,7 @@
 	import Contact from "./pages/Contact.svelte";
 	import Donation from "./pages/Donation.svelte";
 	import Success from "./pages/Success.svelte";
+	import Failure from "./pages/Failure.svelte";
 	import NotFound from "./pages/NotFound.svelte";
 	import { claim_text } from "svelte/internal";
 
@@ -13,6 +14,7 @@
 	router("/", () => (page = Home));
 	router("/about", () => (page = About));
 	router("/contact", () => (page = Contact));
+	router("/error", () => (page = Failure));
 	router(
 		"/donation/:id",
 		(ctx, next) => {

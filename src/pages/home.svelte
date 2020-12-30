@@ -1,5 +1,5 @@
 <script>
-    import { onMount } from "svelte";
+    // import { onMount } from "svelte";
     import CharityList from "../components/CharityList.svelte";
     import Header from "../components/Header.svelte";
     import Welcome from "../components/Welcome.svelte";
