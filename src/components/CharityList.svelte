@@ -1,5 +1,6 @@
 <script>
     import { onMount, onDestroy, beforeUpdate, afterUpdate } from "svelte";
+    import { fade, slide, fly } from "svelte/transition";
     import { charities } from "../stores/data";
     import Loader from "./Loader.svelte";
     import Modal from "./Modal.svelte";
@@ -66,7 +67,10 @@
 
         <div class="row">
             {#each $charities as charity}
-                <div class="col-lg-4 col-md-6">
+                <div
+                    class="col-lg-4 col-md-6"
+                    in:slide={{ delay: 500 }}
+                    out:fade={{ delay: 500 }}>
                     <div class="xs-popular-item xs-box-shadow">
                         <div class="xs-item-header">
                             {#if isModalOpen === true}
@@ -162,8 +166,12 @@
 
                             <img src={charity.thumbnail} alt="" />
                             <div class="xs-skill-bar">
-                                <div class="xs-skill-track">
-                                    <p>
+                                <div
+                                    class="xs-skill-track"
+                                    style="width:{calculateFunded(charity.pledged, charity.target)}%">
+                                    <p
+                                        in:fly={{ delay: 1000, x: -100 }}
+                                        style="left: 100%">
                                         <span
                                             class="number-percentage-count number-percentage"
                                             data-value="90"
