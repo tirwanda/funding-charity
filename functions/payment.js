@@ -56,7 +56,7 @@ exports.handler = function(event, context, callback) {
                     url: redirect_url,
                     params: parameters
                 })
-            });
+            })
         }).catch(function(err) {
             console.log(`Error: ${err.message}`);
             callback(null, {

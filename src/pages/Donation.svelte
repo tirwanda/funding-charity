@@ -1,42 +1,50 @@
 <script>
+    import { charity, getCharity } from "../stores/data";
+    import { params } from "../stores/pages";
     import router from "page";
     import Header from "../components/Header.svelte";
     import Footer from "../components/Footer.svelte";
     import Loader from "../components/Loader.svelte";
     // import { charities } from "../data/charities";
 
-    export let params;
-    let charity,
-        amount,
+    let amount,
         name,
         email,
         agree = false;
 
-    let data = getCharity(params.id);
-
-    async function getCharity(id) {
-        const res = await fetch(
-            `http://charity-api-bwa.herokuapp.com/charities/${id}`
-        );
-        return res.json();
-    }
+    getCharity($params.id);
 
     async function handleForm(event) {
-        charity.pledged += parseInt(amount);
+        agree = false;
+        const newData = await getCharity($params.id);
+        newData.pledged = newData.pledged + parseInt(amount);
+
         try {
             const res = await fetch(
-                `http://charity-api-bwa.herokuapp.com/charities/${params.id}`,
+                `https://charity-api-bwa.herokuapp.com/charities/${$params.id}`,
                 {
                     method: "PUT",
                     headers: {
                         "content-type": "application/json",
                     },
-                    body: JSON.stringify(charity),
+                    body: JSON.stringify(newData),
                 }
             );
-            console.log(res);
-            //=================== Redirection ==================
-            router.redirect("/success");
+            const resMid = await fetch(`/.netlify/functions/payment`, {
+                method: "POST",
+                headers: {
+                    "content-type": "application/json",
+                },
+                body: JSON.stringify({
+                    id: $params.id,
+                    amount: parseInt(amount),
+                    name,
+                    email,
+                }),
+            });
+            const midtrans = await resMid.json();
+            console.log(midtrans);
+            window.location.href = midtrans.url;
         } catch (err) {
             console.log(err);
         }
@@ -67,9 +75,9 @@
 <Header />
 <!-- welcome section -->
 <!--breadcumb start here-->
-{#await data}
+{#if !$charity}
     <Loader />
-{:then charity}
+{:else}
     <section
         class="xs-banner-inner-section parallax-window"
         style="background-image:url('/assets/images/about-donation-bg.jpg');">
@@ -77,7 +85,7 @@
         <div class="container">
             <div class="color-white xs-inner-banner-content">
                 <h2>Donate Now</h2>
-                <p>{charity.title}</p>
+                <p>{$charity.title}</p>
                 <ul class="xs-breadcumb">
                     <li class="badge badge-pill badge-primary">
                         <a href="/" class="color-white">Home /</a>
@@ -97,7 +105,7 @@
                     <div class="col-lg-6">
                         <div class="xs-donation-form-images">
                             <img
-                                src={charity.thumbnail}
+                                src={$charity.thumbnail}
                                 class="img-responsive"
                                 alt="Family Images" />
                         </div>
@@ -105,7 +113,7 @@
                     <div class="col-lg-6">
                         <div class="xs-donation-form-wraper">
                             <div class="xs-heading xs-mb-30">
-                                <h2 class="xs-title">{charity.title}</h2>
+                                <h2 class="xs-title">{$charity.title}</h2>
                                 <p class="small">
                                     To learn more about make donate charity with
                                     us visit our "<span
@@ -199,6 +207,6 @@
         </section>
         <!-- End donation form section -->
     </main>
-{/await}
+{/if}
 <!-- footer section start -->
 <Footer />

@@ -1,7 +1,8 @@
 <script>
     import { onMount, onDestroy, beforeUpdate, afterUpdate } from "svelte";
+    import { charities } from "../stores/data";
+    import Loader from "./Loader.svelte";
     import Modal from "./Modal.svelte";
-    export let charities;
     let isModalOpen = false;
 
     function calculateFunded(pledged, target) {
@@ -9,7 +10,7 @@
     }
 
     function formatCurrency(nominal) {
-        return nominal.toLocaleString("id-ID", {
+        return parseInt(nominal).toLocaleString("id-ID", {
             style: "currency",
             currency: "IDR",
         });
@@ -64,7 +65,7 @@
         <!-- .row end -->
 
         <div class="row">
-            {#each charities as charity}
+            {#each $charities as charity}
                 <div class="col-lg-4 col-md-6">
                     <div class="xs-popular-item xs-box-shadow">
                         <div class="xs-item-header">
@@ -224,6 +225,8 @@
                     </div>
                     <!-- .xs-popular-item END -->
                 </div>
+            {:else}
+                <Loader />
             {/each}
         </div>
         <!-- .row end -->

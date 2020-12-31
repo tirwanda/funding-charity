@@ -1,5 +1,6 @@
 <script>
 	import router from "page";
+	import { page, params } from "./stores/pages";
 	import Home from "./pages/home.svelte";
 	import About from "./pages/About.svelte";
 	import Contact from "./pages/Contact.svelte";
@@ -9,27 +10,25 @@
 	import NotFound from "./pages/NotFound.svelte";
 	import { claim_text } from "svelte/internal";
 
-	let page, params;
-
-	router("/", () => (page = Home));
-	router("/about", () => (page = About));
-	router("/contact", () => (page = Contact));
-	router("/error", () => (page = Failure));
+	router("/", () => ($page = Home));
+	router("/about", () => ($page = About));
+	router("/contact", () => ($page = Contact));
+	router("/error", () => ($page = Failure));
 	router(
 		"/donation/:id",
 		(ctx, next) => {
-			params = ctx.params;
+			$params = ctx.params;
 			next();
 		},
-		() => (page = Donation)
+		() => ($page = Donation)
 	);
-	router("/success", () => (page = Success));
+	router("/success", () => ($page = Success));
 
-	router("/*", () => (page = NotFound));
+	router("/*", () => ($page = NotFound));
 
 	router.start();
 </script>
 
 <!-- <About /> -->
 
-<svelte:component this={page} {params} />
+<svelte:component this={$page} />
