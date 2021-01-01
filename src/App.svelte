@@ -10,6 +10,8 @@
 	import NotFound from "./pages/NotFound.svelte";
 	import { claim_text } from "svelte/internal";
 
+	export let ready;
+
 	router("/", () => ($page = Home));
 	router("/about", () => ($page = About));
 	router("/contact", () => ($page = Contact));
@@ -31,4 +33,4 @@
 
 <!-- <About /> -->
 
-<svelte:component this={$page} />
+<svelte:component this={$page} {ready} />
